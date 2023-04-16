@@ -6,19 +6,19 @@ import static org.testng.Assert.assertEquals;
 
 public class TextBoxPageTest extends BaseTest {
 
-    String url = "https://demoqa.com/text-box/";
-
     @Test
     public void testFullNameInput() throws InterruptedException {
-        getDriver().get(url);
+        getDriver().get(getUrl());
         WebElement nameTextBox = getDriver().findElement(By.xpath("//*[@id=\"userName\"]"));
         WebElement submitButton = getDriver().findElement(By.xpath("//*[@id=\"submit\"]"));
+        WebElement resultField = getDriver().findElement(By.xpath("//*[@id=\"name\"]"));
 
         nameTextBox.sendKeys("FirstName LastName");
         submitButton.click();
 
-        WebElement resultField = getDriver().findElement(By.xpath("//*[@id=\"name\"]"));
+        String textInField = nameTextBox.getAttribute("value");
 
+        assertEquals(textInField, "FirstName LastName");
         assertEquals(resultField.getText(), "Name:FirstName LastName", "Input did not matched");
     }
 }
