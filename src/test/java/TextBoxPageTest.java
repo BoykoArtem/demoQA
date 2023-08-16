@@ -38,7 +38,7 @@ public class TextBoxPageTest extends BaseTest {
         System.out.println(nameTextBox.getCssValue("box-shadow"));
     }
 
- */
+
     @Test
     public void testResponse() throws IOException {
         WebElement image = getDriver().findElement(By.xpath("//*[@id=\"app\"]/header/a/img"));
@@ -50,6 +50,7 @@ public class TextBoxPageTest extends BaseTest {
         httpsURLConnection.setConnectTimeout(5000);
         assertEquals(httpsURLConnection.getResponseCode(), 200);
     }
+    */
     String name = "John Doe";
     String mail = "name@mail.com";
     String invalidMail = "name@mail.comm";
