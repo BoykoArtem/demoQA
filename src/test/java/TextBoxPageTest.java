@@ -1,22 +1,15 @@
+import Data.TextBoxPageData;
 import jdk.jfr.Description;
 import model.MainPage;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import runner.BaseTest;
 
-@Test(dependsOnGroups = {"smoke"})
+//@Test(dependsOnGroups = {"smoke"})
 public class TextBoxPageTest extends BaseTest {
     /*
-        @DataProvider(name = "valid-names")
-        public Object[][] provideValidNames() {
-            return new Object[][]
-                    {{"!"}, {"?"}}; //расширить потом пул
-        }
 
-        @Test(dataProvider = "wrong-chars")
-        public void testInvalidChars() {
-
-        }
         @Test(dependsOnMethods = "testFullNameInput")
         public void testCss() throws InterruptedException {
             WebElement nameTextBox = getNameTextBox();
@@ -50,6 +43,10 @@ public class TextBoxPageTest extends BaseTest {
     private static final String invalidMail = "name@mail.comm";
     private static final String currAddress = "Lenina street 15";
     private static final String permAddress = "Pushkina street 51";
+    private static final String spaceBeforeText = " john@doe.com";
+    private static final String spaceAfterText = "john@doe.com ";
+
+
 
     @Description("tb-1 Общий smoke test")
     @Test(groups = {"smoke"})
@@ -77,6 +74,7 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + currAddress);
         Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + permAddress);
     }
+
     @Description("tb-2 Данные не отправляются если поле Email заполнено некорректно")
     @Test
     public void testInvalidMail() throws InterruptedException {
@@ -96,6 +94,7 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
         Assert.assertEquals(mainPage.getColorOfMailField(), "rgb(255, 0, 0)");
     }
+
     @Description("tb-3 После обновления страницы все введенные данные очищаются")
     @Test
     public void testDataAfterPageRefresh() throws InterruptedException {
@@ -115,7 +114,8 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
         Assert.assertEquals(mainPage.getColorOfMailField(), "rgb(255, 0, 0)");
 
-        getDriver().navigate().refresh();
+        mainPage.getPageRefresh();
+        getWait2().until(ExpectedConditions.visibilityOf(mainPage.getNameTextBox()));
 
         Assert.assertEquals(mainPage.getTextInNameField(), "");
         Assert.assertEquals(mainPage.getTextInMailField(), "");
@@ -123,6 +123,7 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertEquals(mainPage.getTextInPermAddressField(), "");
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
     }
+
     @Description("Проверка плейсхолдеров полей")
     @Test
     public void testPlaceholders() {
@@ -146,6 +147,7 @@ public class TextBoxPageTest extends BaseTest {
 
         Assert.assertEquals(permanentAddressPlaceholder,"");
     }
+
     @Description("Проверка текста в хедере")
     @Test
     public void testHeader() {
@@ -153,6 +155,7 @@ public class TextBoxPageTest extends BaseTest {
 
         Assert.assertEquals(headerText, "Text Box");
     }
+
     @Description("Проверка url картинки в хедере")
     @Test
     public void testHeaderBackgroundImage() {
@@ -168,20 +171,20 @@ public class TextBoxPageTest extends BaseTest {
         MainPage mainPage = new MainPage(getDriver())
                 .clickNameInput();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         String actualColor = mainPage.getColorOfNameField();
 
         Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
     }
 
-    @Description("Проверка подсветки активного поля ввода gjxns")
+    @Description("Проверка подсветки активного поля ввода почты")
     @Test
     public void testActiveMailInputHighlight() throws InterruptedException {
         MainPage mainPage = new MainPage(getDriver())
                 .clickMailInput();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         String actualColor = mainPage.getColorOfMailField();
 
@@ -194,7 +197,7 @@ public class TextBoxPageTest extends BaseTest {
         MainPage mainPage = new MainPage(getDriver())
                 .clickCurrAddressInput();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         String actualColor = mainPage.getColorOfCurrAddressField();
 
@@ -207,10 +210,103 @@ public class TextBoxPageTest extends BaseTest {
         MainPage mainPage = new MainPage(getDriver())
                 .clickPermAddressInput();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         String actualColor = mainPage.getColorOfPermAddressField();
 
         Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
     }
+
+    @Description("Валидация поля ввода имени")
+    @Test(dataProvider = "validNames", dataProviderClass = TextBoxPageData.class)
+    public void testValidNames(String validNames) {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputName(validNames)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedNameText(), "Name:" + validNames.trim());
+    }
+
+    @Description("Валидация поля ввода почты. Валидные адреса")
+    @Test(dataProvider = "validMails", dataProviderClass = TextBoxPageData.class)
+    public void testValidMails(String validMails) {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputMail(validMails)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedMail(), "Email:" + validMails.trim());
+    }
+
+    @Description("Валидация поля ввода почты. Невалиддные адреса")
+    @Test(dataProvider = "invalidMails", dataProviderClass = TextBoxPageData.class)
+    public void testInvalidMails(String invalidMails) throws InterruptedException {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputMail(invalidMails)
+                .clickSubmitButton();
+
+        Thread.sleep(200);
+
+        Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
+        Assert.assertEquals(mainPage.getColorOfMailField(), "rgb(255, 0, 0)");
+    }
+
+    @Description("Валидация поля ввода текущего адреса")
+    @Test(dataProvider = "validNames", dataProviderClass = TextBoxPageData.class)
+    public void testValidCurrentAddresses(String validNames) {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputCurrAddress(validNames)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + validNames.trim());
+    }
+
+    @Description("Валидация поля ввода прописки")
+    @Test(dataProvider = "validNames", dataProviderClass = TextBoxPageData.class)
+    public void testValidPermanentAddresses(String validNames) {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputPermAddress(validNames)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + validNames.trim());
+    }
+
+    @Description("Проверка обрезания пробелов перед текстом в поля ввода имени, адреса и прописки")
+    @Test
+    public void testSpacesBeforeTextTrim() {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputName(spaceBeforeText)
+                .inputCurrAddress(spaceBeforeText)
+                .inputPermAddress(spaceBeforeText)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedNameText(),"Name:" + spaceBeforeText);
+        Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + spaceBeforeText);
+        Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + spaceBeforeText);
+    }
+
+    @Description("Проверка обрезания пробелов после текста в поля ввода имени, адреса и прописки")
+    @Test
+    public void testSpacesAfterTextTrim() {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputName(spaceAfterText)
+                .inputCurrAddress(spaceAfterText)
+                .inputPermAddress(spaceAfterText)
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedNameText(),"Name:" + spaceAfterText.trim());
+        Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + spaceAfterText.trim());
+        Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + spaceAfterText.trim());
+    }
+
+    @Description("Проверка обрезания пробелов в поле ввода почты")
+    @Test(dataProvider = "Spaces", dataProviderClass = TextBoxPageData.class)
+    public void testMailInputSpacesTrim(String textWithSpaces) {
+        MainPage mainPage = new MainPage(getDriver())
+                .inputMail(textWithSpaces)
+
+                .clickSubmitButton();
+
+        Assert.assertEquals(mainPage.getSubmittedMail(), "Email:" + textWithSpaces.trim());
+    }
+
 }

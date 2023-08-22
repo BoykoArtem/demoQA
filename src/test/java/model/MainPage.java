@@ -5,7 +5,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import java.util.List;
 
 public class MainPage extends BasePage {
     public MainPage(WebDriver driver) {
@@ -14,6 +13,7 @@ public class MainPage extends BasePage {
 
     @FindBy(xpath = "//*[@id=\"app\"]/div/div/div[1]/div")
     private WebElement header;
+
     @FindBy(xpath = "//*[@id=\"app\"]/div/div/div[1]")
     private WebElement backgroundImage;
 
@@ -29,9 +29,6 @@ public class MainPage extends BasePage {
     @FindBy(xpath = "//*[@id=\"permanentAddress\"]")
     private WebElement permAddressTextBox;
 
-    @FindBy(xpath = "//*[@id=\"userName\"]")
-    private List<WebElement> inputs;
-
     @FindBy(xpath = "//*[@id=\"submit\"]")
     private WebElement submitButton;
 
@@ -41,16 +38,21 @@ public class MainPage extends BasePage {
     @FindBy(xpath = "//*[@id=\"email\"]")
     private WebElement submittedMail;
 
-    @FindBy(xpath = "/html/body/div[2]/div/div/div[2]/div[2]/div[2]/form/div[6]/div/p[3]")
+    @FindBy(xpath = "//*[@id=\"output\"]/div//*[@id=\"currentAddress\"]")
     private WebElement submittedCurrAddress;
 
-    @FindBy(xpath = "/html/body/div[2]/div/div/div[2]/div[2]/div[2]/form/div[6]/div/p[4]")
+    @FindBy(xpath = "//*[@id=\"output\"]/div//*[@id=\"permanentAddress\"]")
     private WebElement submittedPermAddress;
+
+    public WebElement getNameTextBox() {
+        return nameTextBox;
+    }
 
     @Step("check the header")
     public String getHeaderText() {
         return header.getText();
     }
+
     @Step("check url of background image")
     public String getBackgroundImage() {
         return backgroundImage.getCssValue("background-image");
@@ -169,11 +171,11 @@ public class MainPage extends BasePage {
         permAddressTextBox.click();
         return new MainPage(getDriver());
     }
-
+    @Step("check if submitted fields are NOT displayed at the bottom of the page")
     public boolean submittedFieldsIsDisplayed() {
         try {
-            return submittedName.isDisplayed() && submittedMail.isDisplayed() &&
-                    submittedCurrAddress.isDisplayed() && submittedPermAddress.isDisplayed();
+            return submittedName.isDisplayed() | submittedMail.isDisplayed() &
+                    submittedCurrAddress.isDisplayed() | submittedPermAddress.isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         }
@@ -197,6 +199,11 @@ public class MainPage extends BasePage {
     @Step("check Permanent Address input field placeholder")
     public String getPermAddressPlaceholder() {
         return permAddressTextBox.getAttribute("placeholder");
+    }
+
+    @Step("refresh page")
+    public void getPageRefresh() {
+        getDriver().navigate().refresh();
     }
 
 }

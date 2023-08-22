@@ -13,7 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aspectj.version>1.9.19</aspectj.version>
-        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+        <allure.results.directory>${project.build.directory}\allure-results</allure.results.directory>
     </properties>
 
     <dependencies>
@@ -50,10 +50,10 @@
                 <version>2.20</version>
                 <configuration>
                     <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}\aspectjweaver-${aspectj.version}.jar"
+                        -javaagent:"${settings.localRepository}\org\aspectj\aspectjweaver\${aspectj.version}\aspectjweaver-${aspectj.version}.jar"
                     </argLine>
                     <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <allure.results.directory>${project.build.directory}\allure-results</allure.results.directory>
                     </systemPropertyVariables>
 
                 </configuration>
