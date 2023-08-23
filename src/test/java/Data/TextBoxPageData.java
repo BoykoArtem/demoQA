@@ -62,7 +62,7 @@ public class TextBoxPageData {
                 {"john@doe"},
                 {"12345"},
                 {" "},
-                {" " + " " + " "},
+                {"     "},
                 {"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut"},
                 {"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut" +
                         " laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation " +

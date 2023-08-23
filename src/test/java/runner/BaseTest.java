@@ -10,6 +10,7 @@ import java.time.Duration;
 
 public abstract class BaseTest {
     private WebDriver driver;
+
     private WebDriverWait wait2;
 
     protected WebDriver getDriver() {
@@ -38,7 +39,7 @@ public abstract class BaseTest {
 
     protected WebDriverWait getWait2() {
         if (wait2 == null) {
-            wait2 = new WebDriverWait(getDriver(), Duration.ofSeconds(2), Duration.ofMillis(200));
+            wait2 = new WebDriverWait(getDriver(), Duration.ofSeconds(2));
         }
         return wait2;
     }

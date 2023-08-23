@@ -5,6 +5,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPage extends BasePage {
     public MainPage(WebDriver driver) {
@@ -16,6 +18,9 @@ public class MainPage extends BasePage {
 
     @FindBy(xpath = "//*[@id=\"app\"]/div/div/div[1]")
     private WebElement backgroundImage;
+
+    @FindBy(xpath = "//*[@class=\"form-label\"]")
+    private List<WebElement> inputLabels;
 
     @FindBy(xpath = "//*[@id=\"userName\"]")
     private WebElement nameTextBox;
@@ -56,6 +61,19 @@ public class MainPage extends BasePage {
     @Step("check url of background image")
     public String getBackgroundImage() {
         return backgroundImage.getCssValue("background-image");
+    }
+
+    public static List<String> listLabels(List<WebElement> elementList) {
+        List<String> stringList = new ArrayList<>();
+        for (WebElement element : elementList) {
+            stringList.add(element.getText());
+        }
+        return stringList;
+    }
+
+    @Step("get labels text")
+    public List<String> getLabelsText() {
+        return listLabels(inputLabels);
     }
 
     @Step("input full name '{name}' in the name input field on Main page")
@@ -112,9 +130,14 @@ public class MainPage extends BasePage {
         return mailTextBox.getAttribute("value");
     }
 
-    @Step("check current border color of Full Name input field")
-    public String getColorOfNameField() {
-        return nameTextBox.getCssValue("border-color");
+    @Step("check current highlight color of Full Name input field")
+    public String getHighlightColorOfNameField() {
+        return nameTextBox.getCssValue("box-shadow");
+    }
+
+    @Step("check current highlight color of Email input field")
+    public String getHighlightColorOfMailField() {
+        return mailTextBox.getCssValue("box-shadow");
     }
 
     @Step("check current border color of Email input field")
@@ -122,14 +145,14 @@ public class MainPage extends BasePage {
         return mailTextBox.getCssValue("border-color");
     }
 
-    @Step("check current border color of Current Address input field")
-    public String getColorOfPermAddressField() {
-        return permAddressTextBox.getCssValue("border-color");
+    @Step("check current highlight color of Current Address input field")
+    public String getHighlightColorOfPermAddressField() {
+        return permAddressTextBox.getCssValue("box-shadow");
     }
 
-    @Step("check current border color of Permanent Address input field")
-    public String getColorOfCurrAddressField() {
-        return currAddressTextBox.getCssValue("border-color");
+    @Step("check current highlight color of Permanent Address input field")
+    public String getHighlightColorOfCurrAddressField() {
+        return currAddressTextBox.getCssValue("box-shadow");
     }
 
     @Step("check entered text in Current Address input field on Main page")
@@ -146,6 +169,20 @@ public class MainPage extends BasePage {
     public MainPage clickSubmitButton() {
         submitButton.click();
         return new MainPage(getDriver());
+    }
+
+    public WebElement getSubmitButton() {
+        return submitButton;
+    }
+
+    @Step("get current color of Submit button")
+    public String getColorOfSubmitButton() {
+        return submitButton.getCssValue("background-color");
+    }
+
+    @Step("get current highlight color of Submit button")
+    public String getHighlightColorOfSubmitButton() {
+        return submitButton.getCssValue("box-shadow");
     }
 
     @Step("click on Name input")

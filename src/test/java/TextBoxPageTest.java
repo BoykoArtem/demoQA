@@ -1,43 +1,16 @@
 import Data.TextBoxPageData;
 import jdk.jfr.Description;
 import model.MainPage;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 import runner.BaseTest;
+import java.util.List;
 
-//@Test(dependsOnGroups = {"smoke"})
+@Test(dependsOnGroups = {"smoke"})
 public class TextBoxPageTest extends BaseTest {
-    /*
 
-        @Test(dependsOnMethods = "testFullNameInput")
-        public void testCss() throws InterruptedException {
-            WebElement nameTextBox = getNameTextBox();
-            // так можно узнать координаты элемента:
-            ((RemoteWebElement) nameTextBox).getCoordinates().inViewPort().getX();
-            System.out.println(((RemoteWebElement) nameTextBox).getCoordinates().inViewPort().getY());
-            System.out.println(((RemoteWebElement) nameTextBox).getCoordinates().inViewPort().getX());
-            System.out.println(nameTextBox.getCssValue("border-color"));
-            System.out.println(nameTextBox.getCssValue("box-shadow"));
-            nameTextBox.sendKeys("123");
-            getWait2().until(ExpectedConditions.textToBePresentInElementValue(nameTextBox, "123"));
-            System.out.println(nameTextBox.getCssValue("border-color"));
-            System.out.println(nameTextBox.getCssValue("box-shadow"));
-        }
-
-
-        @Test
-        public void testResponse() throws IOException {
-            WebElement image = getDriver().findElement(By.xpath("//*[@id=\"app\"]/header/a/img"));
-            String imageSrc = image.getAttribute("src");
-            URL imageUrl = new URL(imageSrc);
-            URLConnection urlConnection = imageUrl.openConnection();
-            HttpsURLConnection httpsURLConnection = (HttpsURLConnection) urlConnection;
-            httpsURLConnection.connect();
-            httpsURLConnection.setConnectTimeout(5000);
-            assertEquals(httpsURLConnection.getResponseCode(), 200);
-        }
-        */
     private static final String name = "John Doe";
     private static final String mail = "name@mail.com";
     private static final String invalidMail = "name@mail.comm";
@@ -47,10 +20,9 @@ public class TextBoxPageTest extends BaseTest {
     private static final String spaceAfterText = "john@doe.com ";
 
 
-
     @Description("tb-1 Общий smoke test")
     @Test(groups = {"smoke"})
-        public void testSmoke() {
+    public void testSmoke() {
         MainPage mainPage = new MainPage(getDriver());
         mainPage
                 .inputName(name)
@@ -85,7 +57,7 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(permAddress)
                 .clickSubmitButton();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         Assert.assertEquals(mainPage.getTextInNameField(), name);
         Assert.assertEquals(mainPage.getTextInMailField(), invalidMail);
@@ -105,7 +77,7 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(permAddress)
                 .clickSubmitButton();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         Assert.assertEquals(mainPage.getTextInNameField(), name);
         Assert.assertEquals(mainPage.getTextInMailField(), invalidMail);
@@ -124,28 +96,40 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
     }
 
+
+    @Description("Проверка названий полей")
+    @Test
+    public void testLabelsText() {
+        List<String> expectedLabelsTexts = List.of("Full Name", "Email", "Current Address", "Permanent Address");
+
+        List<String> actualLabelsTexts = new MainPage(getDriver())
+                .getLabelsText();
+
+        Assert.assertEquals(actualLabelsTexts, expectedLabelsTexts);
+    }
+
     @Description("Проверка плейсхолдеров полей")
     @Test
     public void testPlaceholders() {
         String namePlaceholder = new MainPage(getDriver())
                 .getNamePlaceholder();
 
-        Assert.assertEquals(namePlaceholder,"Full Name");
+        Assert.assertEquals(namePlaceholder, "Full Name");
 
         String mailPlaceholder = new MainPage(getDriver())
                 .getMailPlaceholder();
 
-        Assert.assertEquals(mailPlaceholder,"name@example.com");
+        Assert.assertEquals(mailPlaceholder, "name@example.com");
 
         String currentAddressPlaceholder = new MainPage(getDriver())
                 .getCurrAddressPlaceholder();
 
-        Assert.assertEquals(currentAddressPlaceholder,"Current Address");
+        Assert.assertEquals(currentAddressPlaceholder, "Current Address");
 
         String permanentAddressPlaceholder = new MainPage(getDriver())
                 .getPermAddressPlaceholder();
 
-        Assert.assertEquals(permanentAddressPlaceholder,"");
+        Assert.assertEquals(permanentAddressPlaceholder, "");
     }
 
     @Description("Проверка текста в хедере")
@@ -165,56 +149,96 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertEquals(headerBackgroundSrc, "url(\"https://demoqa.com/images/gplaypattern.jpg\")");
     }
 
-    @Description("Проверка подсветки активного поля ввода имени")
+    @Description("Проверка включения/выключения подсветки активного поля ввода имени")
     @Test
-    public void testActiveNameInputHighlight() throws InterruptedException {
+    public void testNameInputHighlight() throws InterruptedException {
         MainPage mainPage = new MainPage(getDriver())
                 .clickNameInput();
 
         Thread.sleep(250);
 
-        String actualColor = mainPage.getColorOfNameField();
+        String focusedColor = mainPage.getHighlightColorOfNameField();
 
-        Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
-    }
+        Assert.assertEquals(focusedColor, "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px");
 
-    @Description("Проверка подсветки активного поля ввода почты")
-    @Test
-    public void testActiveMailInputHighlight() throws InterruptedException {
-        MainPage mainPage = new MainPage(getDriver())
+        mainPage
+                .clickNameInput()
                 .clickMailInput();
 
         Thread.sleep(250);
 
-        String actualColor = mainPage.getColorOfMailField();
+        String unfocusedColor = mainPage.getHighlightColorOfNameField();
 
-        Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
+        Assert.assertEquals(unfocusedColor, "none");
     }
 
-    @Description("Проверка подсветки активного поля ввода текущего адреса")
+    @Description("Проверка включения/выключения подсветки активного поля ввода почты")
     @Test
-    public void testActiveCurrentAddressInputHighlight() throws InterruptedException {
+    public void testMailInputHighlight() throws InterruptedException {
+        MainPage mainPage = new MainPage(getDriver())
+                .clickMailInput();
+
+        Thread.sleep(350);
+
+        String focusedColor = mainPage.getHighlightColorOfMailField();
+
+        Assert.assertEquals(focusedColor, "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px");
+
+        mainPage
+                .clickMailInput()
+                .clickCurrAddressInput();
+
+        Thread.sleep(350);
+
+        String unfocusedColor = mainPage.getHighlightColorOfMailField();
+
+        Assert.assertEquals(unfocusedColor, "none");
+    }
+
+    @Description("Проверка включения/выключения подсветки активного поля ввода текущего адреса")
+    @Test
+    public void testCurrentAddressInputHighlight() throws InterruptedException {
         MainPage mainPage = new MainPage(getDriver())
                 .clickCurrAddressInput();
 
         Thread.sleep(250);
 
-        String actualColor = mainPage.getColorOfCurrAddressField();
+        String focusedColor = mainPage.getHighlightColorOfCurrAddressField();
 
-        Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
+        Assert.assertEquals(focusedColor, "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px");
+
+        mainPage
+                .clickCurrAddressInput()
+                .clickPermAddressInput();
+
+        Thread.sleep(250);
+
+        String unfocusedColor = mainPage.getHighlightColorOfCurrAddressField();
+
+        Assert.assertEquals(unfocusedColor, "none");
     }
 
-    @Description("Проверка подсветки активного поля ввода прописки")
+    @Description("Проверка включения/выключения подсветки активного поля ввода прописки")
     @Test
-    public void testActivePermanentAddressInputHighlight() throws InterruptedException {
+    public void testPermanentAddressInputHighlight() throws InterruptedException {
         MainPage mainPage = new MainPage(getDriver())
                 .clickPermAddressInput();
 
         Thread.sleep(250);
 
-        String actualColor = mainPage.getColorOfPermAddressField();
+        String focusedColor = mainPage.getHighlightColorOfPermAddressField();
 
-        Assert.assertEquals(actualColor, "rgb(128, 189, 255)");
+        Assert.assertEquals(focusedColor, "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px");
+
+        mainPage
+                .clickPermAddressInput()
+                .clickNameInput();
+
+        Thread.sleep(250);
+
+        String unfocusedColor = mainPage.getHighlightColorOfPermAddressField();
+
+        Assert.assertEquals(unfocusedColor, "none");
     }
 
     @Description("Валидация поля ввода имени")
@@ -244,7 +268,7 @@ public class TextBoxPageTest extends BaseTest {
                 .inputMail(invalidMails)
                 .clickSubmitButton();
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
         Assert.assertEquals(mainPage.getColorOfMailField(), "rgb(255, 0, 0)");
@@ -279,7 +303,7 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(spaceBeforeText)
                 .clickSubmitButton();
 
-        Assert.assertEquals(mainPage.getSubmittedNameText(),"Name:" + spaceBeforeText);
+        Assert.assertEquals(mainPage.getSubmittedNameText(), "Name:" + spaceBeforeText);
         Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + spaceBeforeText);
         Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + spaceBeforeText);
     }
@@ -293,7 +317,7 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(spaceAfterText)
                 .clickSubmitButton();
 
-        Assert.assertEquals(mainPage.getSubmittedNameText(),"Name:" + spaceAfterText.trim());
+        Assert.assertEquals(mainPage.getSubmittedNameText(), "Name:" + spaceAfterText.trim());
         Assert.assertEquals(mainPage.getSubmittedCurrAddress(), "Current Address :" + spaceAfterText.trim());
         Assert.assertEquals(mainPage.getSubmittedPermAddress(), "Permananet Address :" + spaceAfterText.trim());
     }
@@ -309,4 +333,55 @@ public class TextBoxPageTest extends BaseTest {
         Assert.assertEquals(mainPage.getSubmittedMail(), "Email:" + textWithSpaces.trim());
     }
 
+    @Description("Проверка пустого инпута")
+    @Test
+    public void testEmptyInputs() {
+        MainPage mainPage = new MainPage(getDriver())
+                .clickSubmitButton();
+
+        Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
+    }
+
+    @Description("Проверка цвета и ховера на кнопку Submit")
+    @Test
+    public void testSubmitButtonHover() throws InterruptedException {
+        String defaultColor = "rgba(0, 123, 255, 1)";
+        String hoveredColor = "rgba(0, 105, 217, 1)";
+
+        MainPage mainPage = new MainPage(getDriver());
+        Actions actions = new Actions(getDriver());
+
+        Assert.assertEquals(mainPage.getColorOfSubmitButton(), defaultColor);
+
+        actions.moveToElement(mainPage
+                .getSubmitButton())
+                .perform();
+
+        Thread.sleep(350);
+
+        Assert.assertEquals(mainPage.getColorOfSubmitButton(), hoveredColor);
+    }
+
+    @Description("Проверка включения/выключения подсветки кнопки Submit")
+    @Test
+    public void testSubmitButtonHighlight() throws InterruptedException {
+        MainPage mainPage = new MainPage(getDriver())
+                .clickSubmitButton();
+
+        Thread.sleep(250);
+
+        String focusedColor = mainPage.getHighlightColorOfSubmitButton();
+
+        Assert.assertEquals(focusedColor, "rgba(38, 143, 255, 0.5) 0px 0px 0px 3.2px");
+
+        mainPage
+                .clickSubmitButton()
+                .clickNameInput();
+
+        Thread.sleep(250);
+
+        String unfocusedColor = mainPage.getHighlightColorOfSubmitButton();
+
+        Assert.assertEquals(unfocusedColor, "none");
+    }
 }
