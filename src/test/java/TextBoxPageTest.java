@@ -49,7 +49,7 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("tb-2 Данные не отправляются если поле Email заполнено некорректно")
     @Test
-    public void testInvalidMail() throws InterruptedException {
+    public void testInvalidMail()  {
         MainPage mainPage = new MainPage(getDriver())
                 .inputName(name)
                 .inputMail(invalidMail)
@@ -57,7 +57,9 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(permAddress)
                 .clickSubmitButton();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getMailTextBox(), "border-color", "rgb(255, 0, 0)"));
 
         Assert.assertEquals(mainPage.getTextInNameField(), name);
         Assert.assertEquals(mainPage.getTextInMailField(), invalidMail);
@@ -69,7 +71,7 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("tb-3 После обновления страницы все введенные данные очищаются")
     @Test
-    public void testDataAfterPageRefresh() throws InterruptedException {
+    public void testDataAfterPageRefresh()  {
         MainPage mainPage = new MainPage(getDriver())
                 .inputName(name)
                 .inputMail(invalidMail)
@@ -77,7 +79,9 @@ public class TextBoxPageTest extends BaseTest {
                 .inputPermAddress(permAddress)
                 .clickSubmitButton();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getMailTextBox(), "border-color", "rgb(255, 0, 0)"));
 
         Assert.assertEquals(mainPage.getTextInNameField(), name);
         Assert.assertEquals(mainPage.getTextInMailField(), invalidMail);
@@ -151,11 +155,13 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Проверка включения/выключения подсветки активного поля ввода имени")
     @Test
-    public void testNameInputHighlight() throws InterruptedException {
+    public void testNameInputHighlight() {
         MainPage mainPage = new MainPage(getDriver())
                 .clickNameInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getNameTextBox(), "box-shadow", "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px"));
 
         String focusedColor = mainPage.getHighlightColorOfNameField();
 
@@ -165,7 +171,9 @@ public class TextBoxPageTest extends BaseTest {
                 .clickNameInput()
                 .clickMailInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getNameTextBox(), "box-shadow", "none"));
 
         String unfocusedColor = mainPage.getHighlightColorOfNameField();
 
@@ -174,11 +182,13 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Проверка включения/выключения подсветки активного поля ввода почты")
     @Test
-    public void testMailInputHighlight() throws InterruptedException {
+    public void testMailInputHighlight() {
         MainPage mainPage = new MainPage(getDriver())
                 .clickMailInput();
 
-        Thread.sleep(350);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getMailTextBox(), "box-shadow", "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px"));
 
         String focusedColor = mainPage.getHighlightColorOfMailField();
 
@@ -188,7 +198,9 @@ public class TextBoxPageTest extends BaseTest {
                 .clickMailInput()
                 .clickCurrAddressInput();
 
-        Thread.sleep(350);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getMailTextBox(), "box-shadow", "none"));
 
         String unfocusedColor = mainPage.getHighlightColorOfMailField();
 
@@ -197,11 +209,13 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Проверка включения/выключения подсветки активного поля ввода текущего адреса")
     @Test
-    public void testCurrentAddressInputHighlight() throws InterruptedException {
+    public void testCurrentAddressInputHighlight() {
         MainPage mainPage = new MainPage(getDriver())
                 .clickCurrAddressInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getCurrAddressTextBox(), "box-shadow", "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px"));
 
         String focusedColor = mainPage.getHighlightColorOfCurrAddressField();
 
@@ -211,7 +225,9 @@ public class TextBoxPageTest extends BaseTest {
                 .clickCurrAddressInput()
                 .clickPermAddressInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getCurrAddressTextBox(), "box-shadow", "none"));
 
         String unfocusedColor = mainPage.getHighlightColorOfCurrAddressField();
 
@@ -220,11 +236,13 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Проверка включения/выключения подсветки активного поля ввода прописки")
     @Test
-    public void testPermanentAddressInputHighlight() throws InterruptedException {
+    public void testPermanentAddressInputHighlight() {
         MainPage mainPage = new MainPage(getDriver())
                 .clickPermAddressInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getPermAddressTextBox(), "box-shadow", "rgba(0, 123, 255, 0.25) 0px 0px 0px 3.2px"));
 
         String focusedColor = mainPage.getHighlightColorOfPermAddressField();
 
@@ -234,7 +252,9 @@ public class TextBoxPageTest extends BaseTest {
                 .clickPermAddressInput()
                 .clickNameInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getPermAddressTextBox(), "box-shadow", "none"));
 
         String unfocusedColor = mainPage.getHighlightColorOfPermAddressField();
 
@@ -263,12 +283,14 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Валидация поля ввода почты. Невалиддные адреса")
     @Test(dataProvider = "invalidMails", dataProviderClass = TextBoxPageData.class)
-    public void testInvalidMails(String invalidMails) throws InterruptedException {
+    public void testInvalidMails(String invalidMails) {
         MainPage mainPage = new MainPage(getDriver())
                 .inputMail(invalidMails)
                 .clickSubmitButton();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getMailTextBox(), "border-color", "rgb(255, 0, 0)"));
 
         Assert.assertFalse(mainPage.submittedFieldsIsDisplayed());
         Assert.assertEquals(mainPage.getColorOfMailField(), "rgb(255, 0, 0)");
@@ -344,7 +366,7 @@ public class TextBoxPageTest extends BaseTest {
 
     @Description("Проверка цвета и ховера на кнопку Submit")
     @Test
-    public void testSubmitButtonHover() throws InterruptedException {
+    public void testSubmitButtonHover() {
         String defaultColor = "rgba(0, 123, 255, 1)";
         String hoveredColor = "rgba(0, 105, 217, 1)";
 
@@ -357,18 +379,22 @@ public class TextBoxPageTest extends BaseTest {
                 .getSubmitButton())
                 .perform();
 
-        Thread.sleep(350);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getSubmitButton(), "background-color", "rgba(0, 105, 217, 1)"));
 
         Assert.assertEquals(mainPage.getColorOfSubmitButton(), hoveredColor);
     }
 
     @Description("Проверка включения/выключения подсветки кнопки Submit")
     @Test
-    public void testSubmitButtonHighlight() throws InterruptedException {
+    public void testSubmitButtonHighlight() {
         MainPage mainPage = new MainPage(getDriver())
                 .clickSubmitButton();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getSubmitButton(), "box-shadow", "rgba(38, 143, 255, 0.5) 0px 0px 0px 3.2px"));
 
         String focusedColor = mainPage.getHighlightColorOfSubmitButton();
 
@@ -378,7 +404,9 @@ public class TextBoxPageTest extends BaseTest {
                 .clickSubmitButton()
                 .clickNameInput();
 
-        Thread.sleep(250);
+        getWait2().until(ExpectedConditions
+                .attributeToBe(mainPage
+                .getSubmitButton(), "box-shadow", "none"));
 
         String unfocusedColor = mainPage.getHighlightColorOfSubmitButton();
 

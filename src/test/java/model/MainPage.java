@@ -53,6 +53,18 @@ public class MainPage extends BasePage {
         return nameTextBox;
     }
 
+    public WebElement getMailTextBox() {
+        return mailTextBox;
+    }
+
+    public WebElement getCurrAddressTextBox() {
+        return currAddressTextBox;
+    }
+
+    public WebElement getPermAddressTextBox() {
+        return permAddressTextBox;
+    }
+
     @Step("check the header")
     public String getHeaderText() {
         return header.getText();
